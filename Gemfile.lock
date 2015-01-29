@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    certmeister-pg (0.0.1)
+    certmeister-pg (0.0.2)
       certmeister (~> 1.0)
       sequel_pg (~> 1.6)
 
