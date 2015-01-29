@@ -16,9 +16,17 @@ describe Certmeister::Pg::Store do
   private
 
   def pg_cleanup
-    db = Sequel.connect('postgres://localhost/test')
-    certs = db[:certificates]
-    certs.where('cn IN ?', ["axl.starjuice.net", "axl.hetzner.africa"]).delete
+    begin
+      db = Sequel.connect('postgres://localhost/test')
+      certs = db[:certificates]
+      certs.where('cn IN ?', ["axl.starjuice.net", "axl.hetzner.africa"]).delete
+    rescue Sequel::DatabaseError => e
+      if e.message =~ /PG::UndefinedTable/
+        # Table doesn't exist the first time we test
+      else
+        raise
+      end
+    end
   end
 
   before(:each) do
