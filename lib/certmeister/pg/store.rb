@@ -7,6 +7,8 @@ module Certmeister
 
     class Store
 
+      include Enumerable
+
       def initialize(connection_string, options = {})
         @db = Sequel.connect(connection_string, options)
         @db.create_table? :certificates do
@@ -36,6 +38,12 @@ module Certmeister
       def remove(cn)
         num_removed = @certificates.where('cn = ?', cn).delete
         num_removed == 1
+      end
+
+      def each
+        @certificates.each do |row|
+          yield row[:cn], row[:pem]
+        end
       end
 
       def health_check
