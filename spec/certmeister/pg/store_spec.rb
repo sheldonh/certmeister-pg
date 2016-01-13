@@ -5,11 +5,13 @@ require 'certmeister/pg/store'
 
 describe Certmeister::Pg::Store do
 
+  CONNECTION_STRING = "postgres://#{ENV['POSTGRES_USER'] || 'postgres'}@localhost/test"
+
   class << self
     include Certmeister::Test::MemoryStoreInterface
   end
 
-  subject { Certmeister::Pg::Store.new('postgres://localhost/test') }
+  subject { Certmeister::Pg::Store.new(CONNECTION_STRING) }
 
   it_behaves_like_a_certmeister_store
 
@@ -17,7 +19,7 @@ describe Certmeister::Pg::Store do
 
   def pg_cleanup
     begin
-      db = Sequel.connect('postgres://localhost/test')
+      db = Sequel.connect(CONNECTION_STRING)
       certs = db[:certificates]
       certs.where('cn IN ?', ["axl.starjuice.net", "axl.hetzner.africa"]).delete
     rescue Sequel::DatabaseError => e
